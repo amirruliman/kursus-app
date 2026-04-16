@@ -6,7 +6,7 @@
 const CONFIG = {
   // Replace this with your deployed GAS Web App URL
   // Deploy settings: Execute as Me, Access: Anyone (even anonymous)
-  GAS_URL: 'https://script.google.com/macros/s/AKfycbzKLu-YL2Za_-13YwdfDBqLnXwNSQQ25zIoThfi9QVSiBnwQrRO1v8jVRhhjzq-miWc1g/exec',
+  GAS_URL: 'https://script.google.com/macros/s/AKfycby_tYfluU4_j2SXqyecaZnAYocUMxteuvf2okFr6_9wtcM5E1iaUPZuFR4GzJMYY9H2zQ/exec',
 
   APP_NAME: 'Kursus App',
   TOKEN_KEY: 'kursus_token',
