@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kursus App — Login</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="login-page">
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" rx="12" fill="#2563eb"/>
+          <path d="M12 34V16l12-6 12 6v18l-12 6-12-6z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none"/>
+          <path d="M24 10v24M12 16l12 6 12-6" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 class="login-title">Kursus App</h1>
+      <p class="login-subtitle">Sistem Manajemen Kursus</p>
+
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="contoh@email.com"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              autocomplete="current-password"
+              required
+            >
+            <button type="button" class="toggle-password" onclick="togglePassword()" title="Tampilkan/sembunyikan password">
+              <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="login-error" class="alert alert-danger hidden"></div>
+
+        <button type="submit" id="login-btn" class="btn btn-primary btn-block">
+          Masuk
+        </button>
+      </form>
+
+      <p class="login-footer">
+        Hubungi Admin jika lupa password atau belum punya akun.
+      </p>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Redirect if already logged in
+    document.addEventListener('DOMContentLoaded', () => {
+      if (Auth.isLoggedIn()) {
+        const user = Auth.getUser();
+        const redirectMap = { admin: 'admin.html', pengajar: 'teacher.html', siswa: 'student.html' };
+        window.location.href = redirectMap[user.role] || 'index.html';
+      }
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('login-btn');
+      const errorEl = document.getElementById('login-error');
+
+      errorEl.classList.add('hidden');
+      errorEl.textContent = '';
+      UI.setButtonLoading(btn, true);
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const result = await Auth.login(email, password);
+        if (result && !result.success) {
+          errorEl.textContent = result.error || 'Login gagal';
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+        errorEl.classList.remove('hidden');
+      } finally {
+        UI.setButtonLoading(btn, false);
+      }
+    });
+
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const icon = document.getElementById('eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+      } else {
+        input.type = 'password';
+        icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      }
+    }
+  </script>
+</body>
+</html>
